@@ -4,9 +4,9 @@ require('dotenv').config();
 const languages = require('./languages.json');
 const count = 10;
 const NodeCache = require("node-cache");
-const Cache = new NodeCache();
-const MetaCache = new NodeCache();
-const OpenSubCache = new NodeCache();
+const Cache = new NodeCache({ stdTTL: (0.5 * 60 * 60), checkperiod: (1 * 60 * 60) });
+const MetaCache = new NodeCache({ stdTTL: (0.5 * 60 * 60), checkperiod: (1 * 60 * 60) });
+const OpenSubCache = new NodeCache({ stdTTL: (0.5 * 60 * 60), checkperiod: (1 * 60 * 60) });
 
 
 async function subtitles(type, id, lang) {
