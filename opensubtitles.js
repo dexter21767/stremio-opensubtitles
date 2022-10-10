@@ -74,7 +74,6 @@ async function subtitles(type, id, lang) {
             }
             console.log('subs', subs);
             console.log("Cache keys", Cache.keys());
-            //subs = subs.filter(Boolean);
             let cached = Cache.set(cachID, subs);
             console.log("cached", cached)
             return subs;

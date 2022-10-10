@@ -18,21 +18,13 @@ async function getshow(imdb_id, id) {
     let url = `${BaseURL}/en/ssearch/sublanguageid-all/imdbid-${imdb_id.replace('tt', '')}/idmovie-${id}`;
     console.log(url)
     res = await request(url)
-    //console.log(res)
-    /*if(res.response && res.response.status == "404"){
-        url = `${BaseURL}/en/ssearch/sublanguageid-all/idmovie-${id}/idmovie-${id}`;
-        res = await request(url)
 
-    }*/
     let html = parse(res.data)
     let rows = html.querySelectorAll('#search_results tr:not(.head)')
-    //let elm =
     var season = 0;
     episodes = {}
-    //console.log(rows)
     for (let i = 0; i < rows.length; i++) {
         let row = rows[i]
-        //console.log(row)
         if (row.childNodes.length == 1) {
             season++;
             episodes[season] = { season: season }
@@ -45,13 +37,10 @@ async function getshow(imdb_id, id) {
             }
         }
     }
-    //console.log (episodes)
     return episodes
 }
 
 async function getsubs(imdb_id, id, type, season, episode) {
-    //let { name, year, total, id, pic, kind, rating } = meta;
-    //console.log(name, year, total, id, pic, kind, rating)
     if (type == "movie") {
         let path = `/en/search/sublanguageid-all/imdbid-${imdb_id.replace('tt', '')}/idmovie-${id}`
         return getsub(path).catch(error => console.error(error))
@@ -67,29 +56,19 @@ async function getsubs(imdb_id, id, type, season, episode) {
 }
 
 async function getsub(path) {
-    //console.log(episodes)
     let url = BaseURL + path
     console.log(url)
     res = await request(url)
     html = parse(res.data)
     let rows = html.querySelectorAll('#search_results > tbody > tr:not(.head)')
-    /*const index = rows.indexOf(html.querySelector("#search_results tbody").querySelector('tr.head'));
-    if (index > -1) { // only splice array when item is found
-        rows.splice(index, 1); // 2nd parameter means remove one item only
-    }*/
-
-    //console.log(rows)
     var subs = [];
     for (let i = 0; i < rows.length; i++) {
-        // console.log(rows[i].rawAttributes["style"])
         if (!rows[i].rawAttributes["style"]) {
             let elements = rows[i].querySelectorAll("td");
-            //    console.log(elements[0].removeWhitespace().textContent.replace(' onlineDownload Subtitles Searcher',""))
             let fps = elements[3].querySelector('span.p')
             subs.push(
                 {
                     name: elements[0].removeWhitespace().textContent.replace(' onlineDownload Subtitles Searcher', ""),
-                    //url:elements[0].querySelector('strong a').rawAttributes["href"],
                     lang: elements[1].childNodes[0].rawAttributes['title'],
                     uploaded: elements[3].querySelector('time').rawAttributes['datetime'],
                     fps: fps ? fps.rawText : null,
