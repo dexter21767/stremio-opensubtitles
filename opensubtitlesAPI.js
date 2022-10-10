@@ -4,17 +4,26 @@ const config = require('./config.js');
 
 const BaseURL = config.BaseURL;
 
+async function request(url) {
+    return axios.get(url).catch(error => { console.log(error) })
+}
 
 async function getOpenSubData(imdb_id) {
     let url = `${BaseURL}/libs/suggest.php?format=json3&MovieName=${imdb_id}`
-    res = await axios.get(url)
+    res = await request(url)
     return res.data[0];
 }
 
-async function getshow(id) {
-    let url = `${BaseURL}/en/ssearch/sublanguageid-all/idmovie-${id}`;
-    res = await axios.get(url)
-    //console.log(res.data)
+async function getshow(imdb_id, id) {
+    let url = `${BaseURL}/en/ssearch/sublanguageid-all/imdbid-${imdb_id.replace('tt', '')}/idmovie-${id}`;
+    console.log(url)
+    res = await request(url)
+    //console.log(res)
+    /*if(res.response && res.response.status == "404"){
+        url = `${BaseURL}/en/ssearch/sublanguageid-all/idmovie-${id}/idmovie-${id}`;
+        res = await request(url)
+
+    }*/
     let html = parse(res.data)
     let rows = html.querySelectorAll('#search_results tr:not(.head)')
     //let elm =
@@ -40,15 +49,20 @@ async function getshow(id) {
     return episodes
 }
 
-async function getsubs(meta, type, imdb_id, season, episode) {
-    let { name, year, total, id, pic, kind, rating } = meta;
+async function getsubs(imdb_id, id, type, season, episode) {
+    //let { name, year, total, id, pic, kind, rating } = meta;
     //console.log(name, year, total, id, pic, kind, rating)
     if (type == "movie") {
-    let path = `/en/search/sublanguageid-all/idmovie-${id}`
-        return getsub(path)
+        let path = `/en/search/sublanguageid-all/imdbid-${imdb_id.replace('tt', '')}/idmovie-${id}`
+        return getsub(path).catch(error => console.error(error))
     } else {
-        let episodes = await getshow(id);
-        return getsub(episodes[season][episode].url)
+        console.log(id)
+        let episodes = await getshow(imdb_id, id).catch(error => console.error(error));
+        if (episode && episodes[season] && episodes[season][episode] && episodes[season][episode].url) {
+            return getsub(episodes[season][episode].url).catch(error => console.error(error))
+        } else {
+            return
+        }
     }
 }
 
@@ -56,7 +70,7 @@ async function getsub(path) {
     //console.log(episodes)
     let url = BaseURL + path
     console.log(url)
-    res = await axios.get(url)
+    res = await request(url)
     html = parse(res.data)
     let rows = html.querySelectorAll('#search_results > tbody > tr:not(.head)')
     /*const index = rows.indexOf(html.querySelector("#search_results tbody").querySelector('tr.head'));

@@ -55,10 +55,10 @@ app.get('/:configuration?/:resource/:type/:id/:extra?.json', async (req, res) =>
 				return subtitles
 				console.log(subtitles)
 			}).catch(error => { console.error(error); res.end(); })
-		} 
+		}
 	}
 	console.log(subtitles)
-	subtitles = subtitles ? JSON.stringify({ subtitles: subtitles }):JSON.stringify({ subtitles:{} })
+	subtitles = subtitles ? JSON.stringify({ subtitles: subtitles }) : JSON.stringify({ subtitles: {} })
 	res.send(subtitles);
 	res.end();
 })
