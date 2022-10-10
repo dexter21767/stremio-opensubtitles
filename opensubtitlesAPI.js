@@ -5,7 +5,7 @@ const config = require('./config.js');
 const BaseURL = config.BaseURL;
 
 async function request(url) {
-    return axios.get(url).catch(error => { console.log(error) })
+    return axios.get(url,{timeout: 2000}).catch(error => { console.log(error) })
 }
 
 async function getOpenSubData(imdb_id) {
@@ -30,10 +30,17 @@ async function getshow(imdb_id, id) {
             episodes[season] = { season: season }
         } else {
             if (season != 0) {
+               
                 let ep = row.childNodes[0].querySelector("span").rawText;
+                if(row.childNodes[0].querySelector("a")){
                 let title = row.childNodes[0].querySelector("a").rawText;
                 let url = row.childNodes[0].querySelector("a").rawAttributes['href'];
                 episodes[season][ep] = { ep: ep, title: title, url: url, season: season }
+            }
+                else{
+                    episodes[season][ep] = { ep: ep, season: season }
+                }
+            
             }
         }
     }
