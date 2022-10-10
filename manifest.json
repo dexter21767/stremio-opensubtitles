@@ -1,0 +1,28 @@
+{
+    "id": "community.opensubtitles",
+    "version": "0.0.1",
+    "name": "opensubtitles.org subtitles by dexter21767",
+    "description": "Addon for getting subtitles from opensubtitles.org, by Dexter21767.",
+    "logo": "https://i.imgur.com/cGc1DXB.png",
+    "background": "https://github.com/Stremio/stremio-art/raw/main/originals/reiphantomhive1.png",
+    "contactEmail": "ahmidiyasser@gmail.com",
+    "catalogs": [],
+    "resources": [{
+            "name": "subtitles",
+            "types": [
+                "movie",
+                "series"
+            ],
+            "idPrefixes": [
+                "tt"
+            ]
+        }
+    ],
+    "types": [
+            "subtitles"
+    ],
+    "behaviorHints": {
+        "configurable": true,
+        "configurationRequired": true
+    }
+}
