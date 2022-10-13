@@ -1,11 +1,25 @@
 var axios = require("axios").default
 var { parse } = require("node-html-parser")
 const config = require('./config.js');
+const logger = require('./logger')
 
 const BaseURL = config.BaseURL;
 
-async function request(url) {
-    return axios.get(url,{timeout: 2000}).catch(error => { console.log(error) })
+async function request(url, header) {
+
+    return await axios
+        .get(url, header, { timeout: 5000 })
+        .then(res => {
+            return res;
+        })
+        .catch(error => {
+            if (error.response) {
+                logger.error('error on opensubtitlesAPI.js request:', error.response.status, error.response.statusText, error.config.url);
+            } else {
+                logger.error(error);
+            }
+        });
+
 }
 
 async function getOpenSubData(imdb_id) {
@@ -16,7 +30,7 @@ async function getOpenSubData(imdb_id) {
 
 async function getshow(imdb_id, id) {
     let url = `${BaseURL}/en/ssearch/sublanguageid-all/imdbid-${imdb_id.replace('tt', '')}/idmovie-${id}`;
-    console.log(url)
+    logger.info(url)
     res = await request(url)
 
     let html = parse(res.data)
@@ -50,12 +64,12 @@ async function getshow(imdb_id, id) {
 async function getsubs(imdb_id, id, type, season, episode) {
     if (type == "movie") {
         let path = `/en/search/sublanguageid-all/imdbid-${imdb_id.replace('tt', '')}/idmovie-${id}`
-        return getsub(path).catch(error => console.error(error))
+        return getsub(path).catch(error => logger.error(error))
     } else {
-        console.log(id)
-        let episodes = await getshow(imdb_id, id).catch(error => console.error(error));
+        logger.info(id)
+        let episodes = await getshow(imdb_id, id).catch(error => logger.error(error));
         if (episode && episodes[season] && episodes[season][episode] && episodes[season][episode].url) {
-            return getsub(episodes[season][episode].url).catch(error => console.error(error))
+            return getsub(episodes[season][episode].url).catch(error => logger.error(error))
         } else {
             return
         }
@@ -64,7 +78,7 @@ async function getsubs(imdb_id, id, type, season, episode) {
 
 async function getsub(path) {
     let url = BaseURL + path
-    console.log(url)
+    logger.info(url)
     res = await request(url)
     html = parse(res.data)
     let rows = html.querySelectorAll('#search_results > tbody > tr:not(.head)')

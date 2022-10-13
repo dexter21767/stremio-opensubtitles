@@ -5,6 +5,7 @@ const path = require('path');
 const Subtitles = require('./opensubtitles.js');
 const manifest = require("./manifest.json");
 const languages = require('./languages.json');
+const logger = require('./logger')
 
 
 app.set('trust proxy', true)
@@ -46,18 +47,18 @@ app.get('/:configuration?/:resource/:type/:id/:extra?.json', async (req, res) =>
 	res.setHeader('Cache-Control', 'max-age=86400, public');
 	res.setHeader('Content-Type', 'application/json');
 	var subtitles = [];
-	console.log(req.params);
+	logger.info(req.params);
 	const { configuration, resource, type, id } = req.params;
 	if (configuration !== "subtitles" && configuration) {
 		let lang = configuration;
 		if (languages[lang]) {
 			subtitles = await Subtitles(type, id, lang).then(subtitles => {
 				return subtitles
-				console.log(subtitles)
-			}).catch(error => { console.error(error); res.end(); })
+				logger.info(subtitles)
+			}).catch(error => { logger.error(error); res.end(); })
 		}
 	}
-	console.log(subtitles)
+	logger.info(subtitles)
 	subtitles = subtitles ? JSON.stringify({ subtitles: subtitles }) : JSON.stringify({ subtitles: {} })
 	res.send(subtitles);
 	res.end();

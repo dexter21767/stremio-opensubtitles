@@ -1,6 +1,7 @@
 const opensub = require('./opensubtitlesAPI.js');
 const config = require('./config');
 require('dotenv').config();
+const logger = require('./logger')
 const languages = require('./languages.json');
 const count = 10;
 const NodeCache = require("node-cache");
@@ -23,7 +24,7 @@ async function subtitles(type, id, lang) {
     const cachID = `${id}_${lang}`;
     let cached = Cache.get(cachID);
     if (cached) {
-        console.log('cached main', cachID, cached);
+        logger.info('cached main', cachID, cached);
         return cached
     } else {
         var meta = MetaCache.get(id);
@@ -32,18 +33,18 @@ async function subtitles(type, id, lang) {
             if (meta) {
                 MetaCache.set(id, meta);
             } else {
-                console.log('no metadata')
+                logger.info('no metadata')
                 return
             }
         }
         var subtitleslist = OpenSubCache.get(id);
         if (!subtitleslist) {
-            console.log(meta)
+            logger.info(meta)
             subtitleslist = await opensub.getsubs(imdb_id, meta.id, type, season, episode);
             if (subtitleslist) {
                 OpenSubCache.set(id, subtitleslist);
             } else {
-                console.log('no subtitles')
+                logger.info('no subtitles')
                 return
             }
         }
@@ -69,10 +70,10 @@ async function subtitles(type, id, lang) {
                     });
                 }
             }
-            console.log('subs', subs);
-            console.log("Cache keys", Cache.keys());
+            logger.info('subs', subs);
+            logger.info("Cache keys", Cache.keys());
             let cached = Cache.set(cachID, subs);
-            console.log("cached", cached)
+            logger.info("cached", cached)
             return subs;
         } else {
             return

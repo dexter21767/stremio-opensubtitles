@@ -17,7 +17,8 @@
 		"fs": "^0.0.1-security",
 		"node-cache": "^5.1.2",
 		"node-html-parser": "^6.1.1",
-		"stremio-addon-sdk": "latest"
+		"stremio-addon-sdk": "latest",
+		"winston-daily-rotate-file": "^4.7.1"
 	},
 	"devDependencies": {
 		"nodemon": "latest"
