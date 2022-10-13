@@ -6,13 +6,14 @@ const Subtitles = require('./opensubtitles.js');
 const manifest = require("./manifest.json");
 const languages = require('./languages.json');
 const logger = require('./logger')
+var serveIndex = require('serve-index');
 
 
 app.set('trust proxy', true)
 
 app.use('/configure', express.static(path.join(__dirname, 'vue', 'dist')));
 app.use('/assets', express.static(path.join(__dirname, 'vue', 'dist', 'assets')));
-app.use('/logs', express.static(path.join(__dirname, 'logs')));
+app.use('/logs', express.static('logs'), serveIndex('logs', {'icons': true}))
 
 app.use(cors())
 
