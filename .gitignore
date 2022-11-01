@@ -1,5 +1,6 @@
 # ignore ALL .log files
 *.log
+/logs
 /res
 /data
 /node_modules
