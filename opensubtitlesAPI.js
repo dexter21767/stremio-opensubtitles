@@ -23,15 +23,23 @@ async function request(url, header) {
 }
 
 async function getOpenSubData(imdb_id) {
+    try {
     let url = `${BaseURL}/libs/suggest.php?format=json3&MovieName=${imdb_id}`
     res = await request(url)
+    if(!res || !res.data) throw "getOpenSubData error getting data"
     return res.data[0];
+} catch(e){ 
+    console.error(e)
+    logger.error(e)
+}
 }
 
 async function getshow(imdb_id, id) {
+    try{
     let url = `${BaseURL}/en/ssearch/sublanguageid-all/imdbid-${imdb_id.replace('tt', '')}/idmovie-${id}`;
     logger.info(url)
     res = await request(url)
+    if(!res || !res.data) throw "getshow error getting data"
 
     let html = parse(res.data)
     let rows = html.querySelectorAll('#search_results tr:not(.head)')
@@ -59,9 +67,14 @@ async function getshow(imdb_id, id) {
         }
     }
     return episodes
+} catch(e){ 
+    console.error(e)
+    logger.error(e)
+}
 }
 
 async function getsubs(imdb_id, id, type, season, episode) {
+    try{
     if (type == "movie") {
         let path = `/en/search/sublanguageid-all/imdbid-${imdb_id.replace('tt', '')}/idmovie-${id}`
         return getsub(path).catch(error => logger.error(error))
@@ -74,12 +87,18 @@ async function getsubs(imdb_id, id, type, season, episode) {
             return
         }
     }
+} catch(e){ 
+    console.error(e)
+    logger.error(e)
+}
 }
 
 async function getsub(path) {
+    try{
     let url = BaseURL + path
     logger.info(url)
     res = await request(url)
+    if(!res || !res.data) throw "getsub error getting data"
     html = parse(res.data)
     let rows = html.querySelectorAll('#search_results > tbody > tr:not(.head)')
     var subs = [];
@@ -101,6 +120,10 @@ async function getsub(path) {
     }
     subs = sortByLang(subs)
     return (subs)
+} catch(e){ 
+    console.error(e)
+    logger.error(e)
+}
 }
 
 function sortByLang(subs = Array) {

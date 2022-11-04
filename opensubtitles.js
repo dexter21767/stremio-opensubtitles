@@ -11,30 +11,30 @@ const OpenSubCache = new NodeCache({ stdTTL: (0.5 * 60 * 60), checkperiod: (1 * 
 
 
 async function subtitles(type, id, lang) {
-    var imdb_id, season, episode
-    if (type == "series") {
-        imdb_id = id.split(":")[0];
-        season = id.split(":")[1];
-        episode = id.split(":")[2]
-    } else {
-        imdb_id = id;
-        season = "1";
-        episode = "1";
-    }
-    const cachID = `${id}_${lang}`;
-    let cached = Cache.get(cachID);
-    if (cached) {
-        logger.info('cached main', cachID, cached);
-        return cached
-    } else {
+    try {
+        var imdb_id, season, episode
+        if (type == "series") {
+            imdb_id = id.split(":")[0];
+            season = id.split(":")[1];
+            episode = id.split(":")[2]
+        } else {
+            imdb_id = id;
+            season = "1";
+            episode = "1";
+        }
+        const cachID = `${id}_${lang}`;
+        let cached = Cache.get(cachID);
+        if (cached) {
+            logger.info('cached main', cachID, cached);
+            return cached
+        }
         var meta = MetaCache.get(id);
         if (!meta) {
             meta = await opensub.getOpenSubData(imdb_id);
             if (meta) {
                 MetaCache.set(id, meta);
             } else {
-                logger.info('no metadata')
-                return
+                throw "error getting meta"
             }
         }
         var subtitleslist = OpenSubCache.get(id);
@@ -44,8 +44,7 @@ async function subtitles(type, id, lang) {
             if (subtitleslist) {
                 OpenSubCache.set(id, subtitleslist);
             } else {
-                logger.info('no subtitles')
-                return
+                throw "error getting subtitles"
             }
         }
 
@@ -71,13 +70,16 @@ async function subtitles(type, id, lang) {
                 }
             }
             logger.info('subs', subs);
-            logger.info("Cache keys", Cache.keys());
-            let cached = Cache.set(cachID, subs);
-            logger.info("cached", cached)
+            if(subs) Cache.set(cachID, subs);
             return subs;
         } else {
-            return
+            throw "error"
         }
+
+
+    } catch (e) {
+        console.error(e)
+        logger.error(e)
     }
 }
 module.exports = subtitles;
