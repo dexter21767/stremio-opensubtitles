@@ -1,6 +1,6 @@
 {
 	"name": "stremio-opensubtitles",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "Addon for getting subtitles from opensubtitles.org, by Dexter21767",
 	"scripts": {
 		"start": "node server.js",

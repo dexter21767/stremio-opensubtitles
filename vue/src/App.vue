@@ -196,12 +196,9 @@ const state = reactive({
 });
 
 const searchModal = ref();
-const installModal = ref();
 
 onMounted(() => {
-    //generateInstallUrl()
     state.modal = new Modal(searchModal.value);
-    state.install = new Modal(installModal.value);
 });
 
 
@@ -230,10 +227,11 @@ function selectLanguage(lang) {
 
 function filtered(list, key, value) {
     var filtered = [], i = Object.keys(list).length;
-    var reg = new RegExp(value, 'gi');
+    var reg = new RegExp(value.toLowerCase(), 'i');
     while (i--) {
-        console.log(list[Object.keys(list)[i]])
-        if (reg.test(list[Object.keys(list)[i]][key].toLowerCase())) {
+        let val = list[Object.keys(list)[i]][key].toLowerCase();
+        let test =reg.test(val); 
+        if (test) {
             filtered.push(list[Object.keys(list)[i]]);
         }
     }
