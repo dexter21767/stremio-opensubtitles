@@ -1,6 +1,6 @@
 {
     "id": "community.opensubtitles",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "name": "opensubtitles.org subtitles by dexter21767",
     "description": "Addon for getting subtitles from opensubtitles.org, by Dexter21767.",
     "logo": "https://i.imgur.com/cGc1DXB.png",
@@ -18,9 +18,7 @@
             ]
         }
     ],
-    "types": [
-            "subtitles"
-    ],
+    "types": [],
     "behaviorHints": {
         "configurable": true,
         "configurationRequired": true
