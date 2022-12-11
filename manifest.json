@@ -7,17 +7,7 @@
     "background": "https://github.com/Stremio/stremio-art/raw/main/originals/reiphantomhive1.png",
     "contactEmail": "ahmidiyasser@gmail.com",
     "catalogs": [],
-    "resources": [{
-            "name": "subtitles",
-            "types": [
-                "movie",
-                "series"
-            ],
-            "idPrefixes": [
-                "tt"
-            ]
-        }
-    ],
+    "resources": ["subtitles"],
     "types": [],
     "behaviorHints": {
         "configurable": true,
