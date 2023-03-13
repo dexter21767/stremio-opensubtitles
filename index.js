@@ -64,7 +64,6 @@ app.get('/:configuration?/:resource/:type/:id/:extra?.json', async (req, res) =>
 		if (languages[lang]) {
 			subtitles = await Subtitles(type, id, lang).then(subtitles => {
 				return subtitles
-				console.log(subtitles)
 			}).catch(error => { console.error(error); res.end(); })
 		}
 	}

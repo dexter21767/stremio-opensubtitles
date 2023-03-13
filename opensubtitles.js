@@ -25,7 +25,7 @@ async function subtitles(type, id, lang) {
         const cachID = `${id}_${lang}`;
         let cached = Cache.get(cachID);
         if (cached) {
-            console.log('cached main', cachID, cached);
+            console.log('cached main', cachID);
             return cached
         }
         var meta = MetaCache.get(id);
@@ -39,7 +39,7 @@ async function subtitles(type, id, lang) {
         }
         var subtitleslist = OpenSubCache.get(id);
         if (!subtitleslist) {
-            console.log(meta)
+            //console.log(meta)
             subtitleslist = await opensub.getsubs(imdb_id, meta.id, type, season, episode);
             if (subtitleslist) {
                 OpenSubCache.set(id, subtitleslist);
@@ -52,7 +52,7 @@ async function subtitles(type, id, lang) {
 
 
 
-        if (subtitleslist && subtitleslist[lang]) {
+        if (subtitleslist?.[lang]) {
             let subtitles = subtitleslist[lang];
             const subs = [];
             for (let i = 0; i < subtitles.length; i++) {
@@ -76,7 +76,7 @@ async function subtitles(type, id, lang) {
                     });
                 }
             }
-            console.log('subs', subs);
+            console.log('subs', subs.length);
             if(subs) Cache.set(cachID, subs);
             return subs;
         } else {

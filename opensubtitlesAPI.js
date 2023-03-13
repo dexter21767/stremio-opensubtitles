@@ -25,7 +25,7 @@ async function getOpenSubData(imdb_id) {
     try {
     let url = `${BaseURL}/libs/suggest.php?format=json3&MovieName=${imdb_id}`
     res = await request(url)
-    if(!res || !res.data) throw "getOpenSubData error getting data"
+    if(!res?.data) throw "getOpenSubData error getting data"
     return res.data[0];
 } catch(e){ 
     console.error(e)
@@ -37,7 +37,7 @@ async function getshow(imdb_id, id) {
     let url = `${BaseURL}/en/ssearch/sublanguageid-all/imdbid-${imdb_id.replace('tt', '')}/idmovie-${id}`;
     console.log(url)
     res = await request(url)
-    if(!res || !res.data) throw "getshow error getting data"
+    if(!res?.data) throw "getshow error getting data"
 
     let html = parse(res.data)
     let rows = html.querySelectorAll('#search_results tr:not(.head)')
@@ -78,7 +78,7 @@ async function getsubs(imdb_id, id, type, season, episode) {
     } else {
         console.log(id)
         let episodes = await getshow(imdb_id, id).catch(error => console.error(error));
-        if (episode && episodes[season] && episodes[season][episode] && episodes[season][episode].url) {
+        if (episodes?.[season]?.[episode]?.url) {
             return getsub(episodes[season][episode].url).catch(error => console.error(error))
         } else {
             return
@@ -94,7 +94,7 @@ async function getsub(path) {
     let url = BaseURL + path
     console.log(url)
     res = await request(url)
-    if(!res || !res.data) throw "getsub error getting data"
+    if(!res?.data) throw "getsub error getting data"
     html = parse(res.data)
     let rows = html.querySelectorAll('#search_results > tbody > tr:not(.head)')
     var subs = [];
