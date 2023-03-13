@@ -1,0 +1,1 @@
+web: ./beamup-logger -p $PORT -m 3d -- execute npm start

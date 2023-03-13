@@ -1,7 +1,6 @@
 var axios = require("axios").default
 var { parse } = require("node-html-parser")
 const config = require('./config.js');
-const logger = require('./logger')
 
 const BaseURL = config.BaseURL;
 
@@ -14,9 +13,9 @@ async function request(url, header) {
         })
         .catch(error => {
             if (error.response) {
-                logger.error('error on opensubtitlesAPI.js request:', error.response.status, error.response.statusText, error.config.url);
+                console.error('error on opensubtitlesAPI.js request:', error.response.status, error.response.statusText, error.config.url);
             } else {
-                logger.error(error);
+                console.error(error);
             }
         });
 
@@ -30,14 +29,13 @@ async function getOpenSubData(imdb_id) {
     return res.data[0];
 } catch(e){ 
     console.error(e)
-    logger.error(e)
 }
 }
 
 async function getshow(imdb_id, id) {
     try{
     let url = `${BaseURL}/en/ssearch/sublanguageid-all/imdbid-${imdb_id.replace('tt', '')}/idmovie-${id}`;
-    logger.info(url)
+    console.log(url)
     res = await request(url)
     if(!res || !res.data) throw "getshow error getting data"
 
@@ -69,7 +67,6 @@ async function getshow(imdb_id, id) {
     return episodes
 } catch(e){ 
     console.error(e)
-    logger.error(e)
 }
 }
 
@@ -77,26 +74,25 @@ async function getsubs(imdb_id, id, type, season, episode) {
     try{
     if (type == "movie") {
         let path = `/en/search/sublanguageid-all/imdbid-${imdb_id.replace('tt', '')}/idmovie-${id}`
-        return getsub(path).catch(error => logger.error(error))
+        return getsub(path).catch(error => console.error(error))
     } else {
-        logger.info(id)
-        let episodes = await getshow(imdb_id, id).catch(error => logger.error(error));
+        console.log(id)
+        let episodes = await getshow(imdb_id, id).catch(error => console.error(error));
         if (episode && episodes[season] && episodes[season][episode] && episodes[season][episode].url) {
-            return getsub(episodes[season][episode].url).catch(error => logger.error(error))
+            return getsub(episodes[season][episode].url).catch(error => console.error(error))
         } else {
             return
         }
     }
 } catch(e){ 
     console.error(e)
-    logger.error(e)
 }
 }
 
 async function getsub(path) {
     try{
     let url = BaseURL + path
-    logger.info(url)
+    console.log(url)
     res = await request(url)
     if(!res || !res.data) throw "getsub error getting data"
     html = parse(res.data)
@@ -122,7 +118,6 @@ async function getsub(path) {
     return (subs)
 } catch(e){ 
     console.error(e)
-    logger.error(e)
 }
 }
 

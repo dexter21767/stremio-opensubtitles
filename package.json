@@ -1,6 +1,6 @@
 {
 	"name": "stremio-opensubtitles",
-	"version": "0.0.2",
+	"version": "0.1.0",
 	"description": "Addon for getting subtitles from opensubtitles.org, by Dexter21767",
 	"scripts": {
 		"start": "node server.js",
@@ -19,6 +19,7 @@
 		"node-html-parser": "^6.1.1",
 		"serve-index": "^1.9.1",
 		"stremio-addon-sdk": "latest",
+		"sub2vtt": "github:dexter21767/sub2vtt",
 		"winston-daily-rotate-file": "^4.7.1"
 	},
 	"devDependencies": {

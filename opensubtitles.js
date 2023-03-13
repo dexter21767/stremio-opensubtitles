@@ -1,7 +1,7 @@
 const opensub = require('./opensubtitlesAPI.js');
 const config = require('./config');
 require('dotenv').config();
-const logger = require('./logger')
+const sub2vtt = require('sub2vtt');
 const languages = require('./languages.json');
 const count = 10;
 const NodeCache = require("node-cache");
@@ -25,7 +25,7 @@ async function subtitles(type, id, lang) {
         const cachID = `${id}_${lang}`;
         let cached = Cache.get(cachID);
         if (cached) {
-            logger.info('cached main', cachID, cached);
+            console.log('cached main', cachID, cached);
             return cached
         }
         var meta = MetaCache.get(id);
@@ -39,7 +39,7 @@ async function subtitles(type, id, lang) {
         }
         var subtitleslist = OpenSubCache.get(id);
         if (!subtitleslist) {
-            logger.info(meta)
+            console.log(meta)
             subtitleslist = await opensub.getsubs(imdb_id, meta.id, type, season, episode);
             if (subtitleslist) {
                 OpenSubCache.set(id, subtitleslist);
@@ -58,18 +58,25 @@ async function subtitles(type, id, lang) {
             for (let i = 0; i < subtitles.length; i++) {
                 let value = subtitles[i];
                 if (value) {
-                    let link = value.url.replace(config.BaseURL, '')
-                    let options = `d=${encodeURIComponent(config.BaseURL)}&h=User-Agent:${encodeURIComponent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36')}`;
-                    let url = `http://127.0.0.1:11470/proxy/${options}${link}`;
+                    let link = value.url
+                    //let options = `d=${encodeURIComponent(config.BaseURL)}&h=User-Agent:${encodeURIComponent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36')}`;
+                    
+                    //let url = `http://127.0.0.1:11470/proxy/${options}${link}`;
+                    proxy = {
+                        BaseURL:config.BaseURL,
+                        "User-Agent":'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36'
+                    }
 
+                    let url = config.local + "/sub.vtt?"+sub2vtt.gerenateUrl(link,proxy);
                     subs.push({
                         lang: languages[lang].iso || languages[lang].id,
                         id: `${cachID}_${i}`,
-                        url: `http://127.0.0.1:11470/subtitles.vtt?from=${encodeURIComponent(url)}?.zip`
+                        url:url,
+                        //url: `http://127.0.0.1:11470/subtitles.vtt?from=${encodeURIComponent(url)}?.zip`
                     });
                 }
             }
-            logger.info('subs', subs);
+            console.log('subs', subs);
             if(subs) Cache.set(cachID, subs);
             return subs;
         } else {
@@ -79,7 +86,6 @@ async function subtitles(type, id, lang) {
 
     } catch (e) {
         console.error(e)
-        logger.error(e)
     }
 }
 module.exports = subtitles;
